@@ -272,8 +272,8 @@
 </script>
 <script>
 var BOLTFORGE_EMBEDS = {
-  bookingsUrl: "BOOKINGS_URL",
-  salesiqWidgetCode: "SALESIQ_WIDGET_CODE"
+  bookingsUrl: "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming",
+  salesiqWidgetCode: "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335"
 };
 
 (function () {
@@ -291,11 +291,13 @@ var BOLTFORGE_EMBEDS = {
     var frame = document.createElement("iframe");
     frame.className = "bookings-frame";
     frame.src = url;
-    frame.title = "Book a showroom visit";
+    frame.title = "Book a visit with BoltForge Gaming";
     frame.loading = "lazy";
     var fallback = mount.querySelector("[data-bookings-fallback]");
     if (fallback) fallback.hidden = true;
-    mount.appendChild(frame);
+    var openLink = mount.querySelector(".bookings-open");
+    if (openLink) mount.insertBefore(frame, openLink);
+    else mount.appendChild(frame);
   }
 
   function loadSalesIq() {
@@ -303,13 +305,12 @@ var BOLTFORGE_EMBEDS = {
     if (isPlaceholder(code, "SALESIQ_WIDGET_CODE") || document.getElementById("zsiqscript")) return;
     var start = function () {
       if (document.getElementById("zsiqscript")) return;
-      var zoho = window.$zoho = window.$zoho || {};
-      zoho.salesiq = zoho.salesiq || { widgetcode: code, values: {}, ready: function () {} };
-      zoho.salesiq.widgetcode = code;
+      window.$zoho = window.$zoho || {};
+      $zoho.salesiq = $zoho.salesiq || { ready: function () {} };
       var script = document.createElement("script");
       script.id = "zsiqscript";
       script.defer = true;
-      script.src = "https://salesiq.zoho.com/widget";
+      script.src = "https://salesiq.zohopublic.com/widget?wc=" + encodeURIComponent(code);
       document.body.appendChild(script);
     };
     if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 3000 });

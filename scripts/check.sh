@@ -256,8 +256,12 @@ if "is owned by BoltForge Inc, an Idaho corporation, located at" not in about_ra
     fail("privacy policy lost the ownership sentence")
 
 embeds = (docs / "js" / "embeds.js").read_text()
-if "BOOKINGS_URL" not in embeds or "SALESIQ_WIDGET_CODE" not in embeds:
-    fail("docs/js/embeds.js is missing a placeholder token")
+if "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" not in embeds:
+    fail("docs/js/embeds.js is missing the Zoho Bookings portal URL")
+if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in embeds:
+    fail("docs/js/embeds.js is missing the SalesIQ widget code")
+if "https://salesiq.zohopublic.com/widget?wc=" not in embeds:
+    fail("docs/js/embeds.js is missing the SalesIQ widget URL")
 book = (docs / "book.html").read_text()
 for phrase in (
     "Book a showroom visit",
@@ -271,11 +275,14 @@ for phrase in (
     'data-bookings',
     'href="tel:+12089963502"',
     'href="about.html#contact">Get a Quote',
+    'href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page',
 ):
     if phrase not in book:
         fail(f"book.html missing {phrase}")
-if 'src="BOOKINGS_URL"' in book or "iframe" in book.lower():
-    fail("book.html includes an iframe before the calendar URL is real")
+if "once it is connected" in book:
+    fail("book.html still says the calendar is not connected")
+if "<iframe" in book.lower():
+    fail("book.html should mount the calendar iframe from embeds.js")
 for filename in pages:
     raw = (docs / filename).read_text()
     if 'src="js/embeds.js"' not in raw:

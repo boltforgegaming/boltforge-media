@@ -169,8 +169,9 @@ def build():
         ".theme-footer",
         "display: none !important",
         "max-width: none !important",
-        "BOOKINGS_URL",
-        "SALESIQ_WIDGET_CODE",
+        "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming",
+        "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335",
+        "https://salesiq.zohopublic.com/widget?wc=",
         "ComputerStore",
         "LocalBusiness",
     ):
