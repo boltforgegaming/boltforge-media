@@ -238,13 +238,6 @@ p {
   gap: 16px;
 }
 
-.bookings-fallback {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 18px;
-}
-
 .bookings-frame {
   display: block;
   width: 100%;
@@ -257,6 +250,12 @@ p {
 
 .bookings-open {
   margin: 12px 0 0;
+}
+
+.bookings-call {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .bf-config .bf-book {
@@ -1627,15 +1626,10 @@ section[id] {
 <section class="band">
   <div class="wrap">
     <h2>Choose a time</h2>
-    <div class="bookings" data-bookings>
-      <div class="bookings-fallback" data-bookings-fallback>
-        <p>Online booking is not connected yet. Call the showroom or request a quote and we will set a time.</p>
-        <div class="actions left">
-          <a class="btn" href="tel:+12089963502">Call (208) 996-3502</a>
-          <a class="btn ghost" href="/about#contact">Get a Quote</a>
-        </div>
-      </div>
+    <div class="bookings">
+      <iframe class="bookings-frame" src="https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" title="Book a visit with BoltForge Gaming" loading="lazy"></iframe>
       <p class="bookings-open"><a href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page</a></p>
+      <p class="bookings-call">or call <a href="tel:+12089963502">(208) 996-3502</a></p>
     </div>
   </div>
 </section>

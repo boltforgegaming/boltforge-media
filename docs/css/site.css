@@ -233,13 +233,6 @@ p {
   gap: 16px;
 }
 
-.bookings-fallback {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 18px;
-}
-
 .bookings-frame {
   display: block;
   width: 100%;
@@ -252,6 +245,12 @@ p {
 
 .bookings-open {
   margin: 12px 0 0;
+}
+
+.bookings-call {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .bf-config .bf-book {

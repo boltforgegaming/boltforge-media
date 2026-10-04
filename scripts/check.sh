@@ -260,8 +260,6 @@ if "is owned by BoltForge Inc, an Idaho corporation, located at" not in about_ra
     fail("privacy policy lost the ownership sentence")
 
 embeds = (docs / "js" / "embeds.js").read_text()
-if "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" not in embeds:
-    fail("docs/js/embeds.js is missing the Zoho Bookings portal URL")
 if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in embeds:
     fail("docs/js/embeds.js is missing the SalesIQ widget code")
 if "https://salesiq.zohopublic.com/widget?wc=" not in embeds:
@@ -269,12 +267,13 @@ if "https://salesiq.zohopublic.com/widget?wc=" not in embeds:
 for needle in (
     'closest(".nav-toggle")',
     'closest(".nav")',
-    "MutationObserver",
-    "observer.disconnect()",
     'event.key !== "Escape"',
 ):
     if needle not in embeds:
-        fail(f"docs/js/embeds.js is missing the late-snippet hook {needle}")
+        fail(f"docs/js/embeds.js is missing the menu hook {needle}")
+for stale in ("mountBookings", "watchBookings", "MutationObserver", "data-bookings"):
+    if stale in embeds:
+        fail(f"docs/js/embeds.js still injects the booking iframe ({stale})")
 book = (docs / "book.html").read_text()
 for phrase in (
     "Book a showroom visit",
@@ -285,10 +284,11 @@ for phrase in (
     "20 min",
     "the BoltForge showroom inside Boise Computer Care, 10504 W Fairview Ave, Boise ID 83704",
     "Friday–Wednesday, 10 AM–8 PM. Closed Thursday.",
-    'data-bookings',
+    '<iframe class="bookings-frame" src="https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" title="Book a visit with BoltForge Gaming" loading="lazy"></iframe>',
     'href="tel:+12089963502"',
     'href="about.html#contact">Get a Quote',
     'href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page',
+    'class="bookings-call">or call <a href="tel:+12089963502">(208) 996-3502</a>',
     'id="services"',
     "Services &amp; upgrades",
     "Upgrades: graphics cards, memory, storage, power supplies, cooling, and full platform or case swaps",
@@ -300,10 +300,18 @@ for phrase in (
 ):
     if phrase not in book:
         fail(f"book.html missing {phrase}")
-if "once it is connected" in book:
+if "once it is connected" in book or "not connected yet" in book:
     fail("book.html still says the calendar is not connected")
-if "<iframe" in book.lower():
-    fail("book.html should mount the calendar iframe from embeds.js")
+if "height: 800px" not in css or "min-height: 1200px" not in css:
+    fail("booking iframe lost its 800px desktop or 1200px phone height")
+zoho_book = (root / "zoho" / "book.html").read_text()
+static_iframe = '<iframe class="bookings-frame" src="https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" title="Book a visit with BoltForge Gaming" loading="lazy"></iframe>'
+if book.count(static_iframe) != 1:
+    fail("book.html is missing the static Bookings iframe")
+if zoho_book.count(static_iframe) != 1:
+    fail("zoho/book.html is missing the static Bookings iframe")
+if "not connected yet" in zoho_book or "mountBookings" in zoho_book:
+    fail("zoho/book.html still has the booking fallback or a script mount")
 services = (docs / "services.html").read_text()
 if 'content="0; url=book.html#services"' not in services or 'location.replace("book.html#services")' not in services:
     fail("services.html must redirect to book.html#services")
@@ -338,8 +346,10 @@ if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in 
     fail("zoho/header-code.txt is missing the SalesIQ widget code")
 if "https://salesiq.zohopublic.com/widget?wc=" not in header:
     fail("zoho/header-code.txt is missing the SalesIQ widget URL")
-if "MutationObserver" not in header or 'closest(".nav-toggle")' not in header:
-    fail("zoho/header-code.txt is missing the late-snippet menu and booking hooks")
+if 'closest(".nav-toggle")' not in header:
+    fail("zoho/header-code.txt is missing the delegated phone menu")
+if "mountBookings" in header or "MutationObserver" in header:
+    fail("zoho/header-code.txt still injects the booking iframe")
 
 if errors:
     print(f"{len(errors)} check(s) failed:")

@@ -362,7 +362,6 @@
 </script>
 <script>
 var BOLTFORGE_EMBEDS = {
-  bookingsUrl: "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming",
   salesiqWidgetCode: "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335"
 };
 
@@ -374,33 +373,6 @@ var BOLTFORGE_EMBEDS = {
 
   function isPlaceholder(value, token) {
     return typeof value !== "string" || value.trim() === "" || value.indexOf(token) !== -1;
-  }
-
-  function mountBookings() {
-    var mount = document.querySelector("[data-bookings]");
-    if (!mount) return "waiting";
-    if (mount.querySelector("iframe")) return "mounted";
-    var url = config.bookingsUrl;
-    if (isPlaceholder(url, "BOOKINGS_URL") || url.indexOf("https://") !== 0) return "skip";
-    var frame = document.createElement("iframe");
-    frame.className = "bookings-frame";
-    frame.src = url;
-    frame.title = "Book a visit with BoltForge Gaming";
-    frame.loading = "lazy";
-    var fallback = mount.querySelector("[data-bookings-fallback]");
-    if (fallback) fallback.hidden = true;
-    var openLink = mount.querySelector(".bookings-open");
-    if (openLink) mount.insertBefore(frame, openLink);
-    else mount.appendChild(frame);
-    return "mounted";
-  }
-
-  function watchBookings() {
-    if (mountBookings() !== "waiting" || !document.body) return;
-    var observer = new MutationObserver(function () {
-      if (mountBookings() !== "waiting") observer.disconnect();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function loadSalesIq() {
@@ -453,7 +425,6 @@ var BOLTFORGE_EMBEDS = {
   function boot() {
     bindMenu();
     loadSalesIq();
-    watchBookings();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

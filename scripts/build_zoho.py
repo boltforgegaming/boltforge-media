@@ -143,7 +143,7 @@ def header_code():
 def readme():
     return """# Zoho snippets
 
-Zoho's free plan allows five pages. Paste `header-code.txt` into the site header. It hides the Zoho header and footer, lets each snippet run full bleed, and includes the sitewide schema, the FAQPage block, and the booking and chat embeds. The header script binds the phone menu and mounts the booking iframe when the page snippet appears, so the header can load before Zoho inserts that snippet.
+Zoho's free plan allows five pages. Paste `header-code.txt` into the site header. It hides the Zoho header and footer, lets each snippet run full bleed, and includes the sitewide schema, the FAQPage block, and the chat embed. The header script binds the phone menu when the page snippet appears, so the header can load before Zoho inserts that snippet. The Bookings calendar is static HTML in the Book a Visit snippet.
 
 | Page | Zoho slug | Snippet |
 | --- | --- | --- |
@@ -191,17 +191,17 @@ def build():
         ".theme-footer",
         "display: none !important",
         "max-width: none !important",
-        "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming",
         "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335",
         "https://salesiq.zohopublic.com/widget?wc=",
         "ComputerStore",
         "LocalBusiness",
         "FAQPage",
-        "MutationObserver",
         'closest(".nav-toggle")',
     ):
         if needle not in header:
             raise SystemExit(f"header-code.txt is missing {needle}")
+    if "mountBookings" in header or "MutationObserver" in header:
+        raise SystemExit("header-code.txt still injects the booking iframe")
     part1 = files["custom-build-part1.html"]
     part2 = files["custom-build-part2.html"]
     style_end = part1.find("</style>")
@@ -216,6 +216,9 @@ def build():
     book = "".join(text for name, text in files.items() if name == "book.html" or name.startswith("book-part"))
     if 'id="services"' not in book or "Services &amp; upgrades" not in book:
         raise SystemExit("book snippet is missing the services section")
+    static_iframe = '<iframe class="bookings-frame" src="https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" title="Book a visit with BoltForge Gaming" loading="lazy"></iframe>'
+    if book.count(static_iframe) != 1 or "or call" not in book or "not connected yet" in book:
+        raise SystemExit("book snippet is missing the static Bookings iframe")
     if "services.html" in files:
         raise SystemExit("services snippet should not be generated")
     return files
