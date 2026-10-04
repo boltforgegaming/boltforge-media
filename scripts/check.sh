@@ -277,11 +277,7 @@ for stale in ("mountBookings", "watchBookings", "MutationObserver", "data-bookin
 book = (docs / "book.html").read_text()
 for phrase in (
     "Book a showroom visit",
-    "Showroom Visit &amp; Build Consultation",
-    "Virtual Build Consultation",
-    "PC Pickup &amp; Walkthrough",
-    "30 min",
-    "20 min",
+    "Choose a visit below, then pick a time.",
     "the BoltForge showroom inside Boise Computer Care, 10504 W Fairview Ave, Boise ID 83704",
     "Friday–Wednesday, 10 AM–8 PM. Closed Thursday.",
     '<iframe class="bookings-frame" src="https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" title="Book a visit with BoltForge Gaming" loading="lazy"></iframe>',
@@ -302,6 +298,36 @@ for phrase in (
         fail(f"book.html missing {phrase}")
 if "once it is connected" in book or "not connected yet" in book:
     fail("book.html still says the calendar is not connected")
+for stale in (
+    "Showroom Visit &amp; Build Consultation",
+    "Virtual Build Consultation",
+    "PC Pickup &amp; Walkthrough",
+):
+    if stale in book:
+        fail("book.html still has a static visit card")
+assembly_answer = "Yes. Regular assembly is $250 and is already included in our list Starting-at prices. Through Oct 31, Founder assembly is $149 (save $107, tax included) with a deposit, or Buddy Plan is $99 each when two friends order together. Those offers are not combinable."
+if about_raw.count(assembly_answer) != 2:
+    fail("the assembly FAQ answer must match in the visible FAQ and the FAQPage schema")
+
+def sentences_of(text):
+    plain = re.sub(r"<[^>]+>", "\n", text)
+    return re.split(r"[.!?]+|\n+", plain)
+
+for folder in ("docs", "zoho"):
+    base = root / folder
+    if not base.is_dir():
+        continue
+    for path in sorted(base.rglob("*")):
+        if not path.is_file() or path.suffix.lower() not in {".html", ".txt", ".js", ".css", ".md"}:
+            continue
+        for sentence in sentences_of(path.read_text()):
+            if "$149" not in sentence:
+                continue
+            if "Founder" in sentence:
+                continue
+            if re.search(r"shipping|expedited", sentence, re.I):
+                continue
+            fail(f"{path.relative_to(root)} has $149 without Founder in the same sentence: {' '.join(sentence.split())[:180]}")
 if "height: 800px" not in css or "min-height: 1200px" not in css:
     fail("booking iframe lost its 800px desktop or 1200px phone height")
 zoho_book = (root / "zoho" / "book.html").read_text()
