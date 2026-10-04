@@ -213,6 +213,8 @@ else:
             fail("FAQ answer does not match schema: " + item["name"])
 
 for filename, collector in parsed_pages.items():
+    if filename == "services.html":
+        continue
     found = False
     for block in collector.json_ld:
         data = json.loads(block)
@@ -246,6 +248,8 @@ for path in sorted(docs.glob("*.html")):
     for stale in ("Fairview Ave showroom", "our Boise showroom", "the Boise showroom", "our showroom"):
         if stale in raw:
             fail(f"{path.name} still says {stale!r}")
+    if path.name == "services.html":
+        continue
     if showroom not in raw and showroom.capitalize() not in raw and "The BoltForge showroom inside Boise Computer Care" not in raw:
         fail(f"{path.name} never names the BoltForge showroom inside Boise Computer Care")
 if "<p>BoltForge Gaming is owned by BoltForge Inc, an Idaho corporation.</p>" in about_raw:
@@ -276,6 +280,14 @@ for phrase in (
     'href="tel:+12089963502"',
     'href="about.html#contact">Get a Quote',
     'href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page',
+    'id="services"',
+    "Services &amp; upgrades",
+    "Upgrades: graphics cards, memory, storage, power supplies, cooling, and full platform or case swaps",
+    "Diagnostics and repair for gaming and custom PCs",
+    "Cleaning and thermal paste refresh",
+    "Data transfer and Windows reinstall",
+    "Onsite setup in the Treasure Valley",
+    "18-month parts and labor warranty",
 ):
     if phrase not in book:
         fail(f"book.html missing {phrase}")
@@ -283,7 +295,18 @@ if "once it is connected" in book:
     fail("book.html still says the calendar is not connected")
 if "<iframe" in book.lower():
     fail("book.html should mount the calendar iframe from embeds.js")
+services = (docs / "services.html").read_text()
+if 'content="0; url=book.html#services"' not in services or 'location.replace("book.html#services")' not in services:
+    fail("services.html must redirect to book.html#services")
+if 'href="services.html' in services:
+    fail("services.html still links to itself")
+for path in sorted(docs.glob("*.html")):
+    raw = path.read_text()
+    if 'href="services.html' in raw:
+        fail(f"{path.name} still links to services.html")
 for filename in pages:
+    if filename == "services.html":
+        continue
     raw = (docs / filename).read_text()
     if 'src="js/embeds.js"' not in raw:
         fail(f"{filename} is missing js/embeds.js")
@@ -291,8 +314,21 @@ for filename in pages:
         fail(f"{filename} is missing the Book a Visit nav link")
     if 'class="nav-toggle"' not in raw:
         fail(f"{filename} is missing the menu button")
+    nav = re.search(r'<nav class="nav-links"[^>]*>(.*?)</nav>', raw, re.S)
+    labels = re.findall(r">([^<]+)</a>", nav.group(1) if nav else "")
+    if labels != ["Home", "Builds", "Custom Build", "Book a Visit", "About"]:
+        fail(f"{filename} nav is {labels!r}")
+    if ">Services</a>" in raw:
+        fail(f"{filename} still has a Services nav item")
 if 'href="book.html">Book a visit' not in index or 'class="bf-book"' not in custom:
     fail("Home or Custom Build is missing the Book a visit button")
+header = (root / "zoho" / "header-code.txt").read_text()
+if "FAQPage" not in header:
+    fail("zoho/header-code.txt is missing FAQPage JSON-LD")
+if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in header:
+    fail("zoho/header-code.txt is missing the SalesIQ widget code")
+if "https://salesiq.zohopublic.com/widget?wc=" not in header:
+    fail("zoho/header-code.txt is missing the SalesIQ widget URL")
 
 if errors:
     print(f"{len(errors)} check(s) failed:")
