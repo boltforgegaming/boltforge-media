@@ -46,6 +46,10 @@ for name in root_images:
 if any(root.rglob("CNAME")):
     fail("CNAME file is present")
 
+for path in docs.rglob("*"):
+    if path.is_file() and b"sister" in path.read_bytes().lower():
+        fail(f"{path.relative_to(root)} contains 'sister'")
+
 class Collector(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
