@@ -188,6 +188,76 @@ p {
   text-decoration: none;
 }
 
+.nav-toggle {
+  display: none;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.nav-toggle-bars {
+  position: relative;
+}
+
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.nav-toggle-bars::before { top: -6px; }
+.nav-toggle-bars::after { top: 6px; }
+
+.visit-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.bookings-fallback {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.bookings-frame {
+  display: block;
+  width: 100%;
+  min-height: 70vh;
+  border: 0;
+  border-radius: 16px;
+  background: #111;
+}
+
+.bf-config .bf-book {
+  margin: 0 0 16px;
+}
+
+.bf-config .bf-book .btn {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
 .btn {
   display: inline-block;
   background: var(--lime);
@@ -718,12 +788,68 @@ section[id] {
   .price-chips {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  .visit-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 720px) {
-  .nav-links,
+  .nav {
+    flex-wrap: nowrap;
+    position: relative;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+    padding: 8px;
+    background: #111;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+
+  .nav.is-open .nav-links {
+    display: flex;
+  }
+
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 10px;
+  }
+
+  .logo img {
+    height: 32px;
+  }
+
   .nav-cta {
-    margin-left: 0;
+    margin-left: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    white-space: nowrap;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .bf-config .bf-book .btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .hero {

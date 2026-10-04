@@ -278,8 +278,9 @@
 <header class="site-header">
   <div class="wrap nav">
     <a class="logo" href="index.html"><img src="img/logo.svg" alt="BoltForge Gaming" width="171" height="40"></a>
-    <nav class="nav-links" aria-label="Primary">
-      <a href="index.html">Home</a><a href="builds.html">Builds</a><a href="custom-build.html" aria-current="page">Custom Build</a><a href="services.html">Services</a><a href="about.html">About</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu"><span class="nav-toggle-bars" aria-hidden="true"></span></button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <a href="index.html">Home</a><a href="builds.html">Builds</a><a href="custom-build.html" aria-current="page">Custom Build</a><a href="services.html">Services</a><a href="about.html">About</a><a href="book.html">Book a Visit</a>
     </nav>
     <a class="btn nav-cta" href="about.html#contact">Get a Quote</a>
   </div>
@@ -311,6 +312,7 @@ ${p}
     <div class="bf-kicker">${wt}<span>BoltForge Gaming</span></div>
     <h1>Configure your build</h1>
     <p class="bf-intro">Start from Core, Pro, Pro Max, or Ultra, or pick every part yourself. The estimate updates as you go.</p>
+    <p class="bf-book"><a class="btn ghost" href="book.html">Book a visit</a></p>
     <aside class="bf-suggest" aria-labelledby="bf-suggest-title">
       <p class="bf-suggest-label" id="bf-suggest-title">Not sure where to start?</p>
       <div class="bf-suggest-table">
@@ -505,6 +507,7 @@ ${p}
           <li><a href="builds.html">Builds</a></li>
           <li><a href="custom-build.html">Custom Build</a></li>
           <li><a href="services.html">Services</a></li>
+          <li><a href="book.html">Book a Visit</a></li>
           <li><a href="about.html#about">About</a></li>
           <li><a href="about.html#faq">FAQ</a></li>
           <li><a href="about.html#warranty">Warranty</a></li>
@@ -516,5 +519,6 @@ ${p}
     <p class="footer-fine">BoltForge Gaming is owned by BoltForge Inc, an Idaho corporation. 18-month warranty. Custom orders start with a 50% deposit.</p>
   </div>
 </footer>
+<script src="js/embeds.js" defer></script>
 </body>
 </html>

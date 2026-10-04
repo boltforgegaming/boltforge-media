@@ -1,24 +1,26 @@
-<!-- Paste into Zoho Sites header code. Hides the theme header and footer, lets the snippet run full bleed, and adds the sitewide schema and embed config. -->
-<style>
-.zpheader,
-.zpfooter,
-.zpheader-container,
-.theme-header,
-.theme-footer {
-  display: none !important;
-}
-.theme-content,
-.zpcontent-container,
-.zpelement-wrapper,
-.zpelem-code {
-  max-width: none !important;
-  width: 100% !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Book a Showroom Visit | BoltForge Gaming</title>
+<meta name="description" content="Book a showroom visit, a virtual build consultation, or a PC pickup at the BoltForge showroom inside Boise Computer Care.">
+<link rel="canonical" href="https://www.boltforgegaming.com/book">
+<meta property="og:title" content="Book a Showroom Visit | BoltForge Gaming">
+<meta property="og:description" content="Book a showroom visit, a virtual build consultation, or a PC pickup at the BoltForge showroom inside Boise Computer Care.">
+<meta property="og:url" content="https://www.boltforgegaming.com/book">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://boltforgegaming.github.io/boltforge-media/img/hero.webp">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="img/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="img/favicon-16.png" type="image/png" sizes="16x16">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -270,79 +272,118 @@
   "inLanguage": "en-US"
 }
 </script>
-<script>
-var BOLTFORGE_EMBEDS = {
-  bookingsUrl: "BOOKINGS_URL",
-  salesiqWidgetCode: "SALESIQ_WIDGET_CODE"
-};
-
-(function () {
-  var config = BOLTFORGE_EMBEDS;
-
-  function isPlaceholder(value, token) {
-    return typeof value !== "string" || value.trim() === "" || value.indexOf(token) !== -1;
-  }
-
-  function mountBookings() {
-    var mount = document.querySelector("[data-bookings]");
-    if (!mount || mount.querySelector("iframe")) return;
-    var url = config.bookingsUrl;
-    if (isPlaceholder(url, "BOOKINGS_URL") || url.indexOf("https://") !== 0) return;
-    var frame = document.createElement("iframe");
-    frame.className = "bookings-frame";
-    frame.src = url;
-    frame.title = "Book a showroom visit";
-    frame.loading = "lazy";
-    var fallback = mount.querySelector("[data-bookings-fallback]");
-    if (fallback) fallback.hidden = true;
-    mount.appendChild(frame);
-  }
-
-  function loadSalesIq() {
-    var code = config.salesiqWidgetCode;
-    if (isPlaceholder(code, "SALESIQ_WIDGET_CODE") || document.getElementById("zsiqscript")) return;
-    var start = function () {
-      if (document.getElementById("zsiqscript")) return;
-      var zoho = window.$zoho = window.$zoho || {};
-      zoho.salesiq = zoho.salesiq || { widgetcode: code, values: {}, ready: function () {} };
-      zoho.salesiq.widgetcode = code;
-      var script = document.createElement("script");
-      script.id = "zsiqscript";
-      script.defer = true;
-      script.src = "https://salesiq.zoho.com/widget";
-      document.body.appendChild(script);
-    };
-    if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 3000 });
-    else window.addEventListener("load", start);
-  }
-
-  function bindMenu() {
-    var nav = document.querySelector(".nav");
-    var toggle = document.querySelector(".nav-toggle");
-    var links = document.getElementById("site-nav");
-    if (!nav || !toggle || !links || toggle.dataset.bound === "true") return;
-    toggle.dataset.bound = "true";
-    var setOpen = function (open) {
-      nav.classList.toggle("is-open", open);
-      toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-    };
-    toggle.addEventListener("click", function () {
-      setOpen(toggle.getAttribute("aria-expanded") !== "true");
-    });
-    links.addEventListener("click", function () { setOpen(false); });
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") setOpen(false);
-    });
-  }
-
-  function boot() {
-    mountBookings();
-    loadSalesIq();
-    bindMenu();
-  }
-
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
-})();
-</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="logo" href="index.html"><img src="img/logo.svg" alt="BoltForge Gaming" width="171" height="40"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu"><span class="nav-toggle-bars" aria-hidden="true"></span></button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <a href="index.html">Home</a><a href="builds.html">Builds</a><a href="custom-build.html">Custom Build</a><a href="services.html">Services</a><a href="about.html">About</a><a href="book.html" aria-current="page">Book a Visit</a>
+    </nav>
+    <a class="btn nav-cta" href="about.html#contact">Get a Quote</a>
+  </div>
+</header>
+<main id="content">
+<section class="page-head">
+  <div class="wrap">
+    <h1>Book a showroom visit</h1>
+    <p class="lede">Choose a visit below, then pick a time. The calendar sits on this page once it is connected.</p>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap visit-grid">
+    <article class="card">
+      <div class="body">
+        <h2>Showroom Visit &amp; Build Consultation</h2>
+        <p class="muted">30 min</p>
+        <p>Come in, look at finished builds, and plan a PC around your games and budget.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="body">
+        <h2>Virtual Build Consultation</h2>
+        <p class="muted">20 min</p>
+        <p>Talk through the build on a video call if you cannot get to the showroom.</p>
+      </div>
+    </article>
+    <article class="card">
+      <div class="body">
+        <h2>PC Pickup &amp; Walkthrough</h2>
+        <p class="muted">30 min</p>
+        <p>Pick up your finished PC and walk through the build, cables, and warranty together.</p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    <h2>Choose a time</h2>
+    <div class="bookings" data-bookings>
+      <div class="bookings-fallback" data-bookings-fallback>
+        <p>Online booking is not connected yet. Call the showroom or request a quote and we will set a time.</p>
+        <div class="actions left">
+          <a class="btn" href="tel:+12089963502">Call (208) 996-3502</a>
+          <a class="btn ghost" href="about.html#contact">Get a Quote</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap grid-2">
+    <div>
+      <h2>Visit in person</h2>
+      <p>Visit the BoltForge showroom inside Boise Computer Care, 10504 W Fairview Ave, Boise ID 83704.</p>
+      <p class="muted">Friday–Wednesday, 10 AM–8 PM. Closed Thursday.</p>
+      <div class="actions left">
+        <a class="btn" href="tel:+12089963502">Call (208) 996-3502</a>
+        <a class="btn ghost" href="about.html#contact">Get a Quote</a>
+      </div>
+    </div>
+    <img class="wide-photo" src="img/showroom.webp" alt="The BoltForge showroom inside Boise Computer Care with gaming PCs on a long display counter" width="1280" height="720" loading="lazy">
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-brand"><strong>BoltForge Gaming</strong> Hand-built custom gaming PCs in Boise. Now showcased and open for sales and builds at Boise Computer Care.</p>
+    <div class="footer-grid">
+      <div>
+        <h2>Hours</h2>
+        <p>Friday–Wednesday<br>10 AM–8 PM</p>
+        <p>Thursday<br>Closed</p>
+      </div>
+      <div>
+        <h2>Address</h2>
+        <address>10504 W Fairview Ave<br>Boise, ID 83704</address>
+        <p><a href="https://www.google.com/maps/search/?api=1&amp;query=10504+W+Fairview+Ave+Boise+ID+83704">Get directions</a></p>
+      </div>
+      <div>
+        <h2>Phone</h2>
+        <p><a href="tel:+12089963502">(208) 996-3502</a></p>
+        <p><a href="mailto:admin@boltforgegaming.com">admin@boltforgegaming.com</a></p>
+      </div>
+      <div>
+        <h2>Links</h2>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="builds.html">Builds</a></li>
+          <li><a href="custom-build.html">Custom Build</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="book.html">Book a Visit</a></li>
+          <li><a href="about.html#about">About</a></li>
+          <li><a href="about.html#faq">FAQ</a></li>
+          <li><a href="about.html#warranty">Warranty</a></li>
+          <li><a href="about.html#contact">Contact</a></li>
+          <li><a href="about.html#privacy">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="footer-fine">BoltForge Gaming is owned by BoltForge Inc, an Idaho corporation. 18-month warranty. Custom orders start with a 50% deposit.</p>
+  </div>
+</footer>
+<script src="js/embeds.js" defer></script>
+</body>
+</html>
