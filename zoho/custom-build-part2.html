@@ -20,36 +20,32 @@ ${p}
 %%EOF`),new TextEncoder().encode(n.join(""))}var wt='<svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#D8FF44" d="M18.2 1.5 7 17.2h8.2L12.4 30.5 26 13.2h-8.1L18.2 1.5z"/></svg>';function Ie(t){if(document.getElementById("bf-config-css"))return;let e=document.createElement("style");e.id="bf-config-css",e.textContent=t,document.head.appendChild(e)}function Fe(t,e){t.classList.add("bf-config");let o=Me(e,location.hash),r=o??le,n="pickup",s="none",c=o!==null,f={interestTouched:!1,budgetTouched:!1};t.innerHTML=`
     <div class="bf-kicker">${wt}<span>BoltForge Gaming</span></div>
     <h1>Configure your build</h1>
-    <div class="bf-intro-grid">
-      <p class="bf-lead" style="align-self:start">Start from Core, Pro, Pro Max, or Ultra, or pick every part yourself. The estimate updates as you go.</p>
-      <aside class="bf-suggest" aria-labelledby="bf-suggest-title">
-        <h2 id="bf-suggest-title">Not sure where to start?</h2>
-        <div class="bf-suggest-cards">
-          <article class="bf-suggest-card">
-            <img src="https://raw.githubusercontent.com/boltforgegaming/boltforge-media/main/docs/img/tier-pro.webp" alt="Black BoltForge Pro gaming PC" width="278" height="420">
-            <div>
-              <p class="bf-suggest-name">Pro</p>
-              <p class="bf-suggest-pitch">1440p high</p>
-              <p class="bf-suggest-price">Starting at $3,858 · Tax included</p>
-              <p class="bf-suggest-founder">Founder price, deposit by Oct 31 · $3,751</p>
-              <button type="button" data-bf="tier" data-tier="pro" aria-pressed="false">Start with this build</button>
-            </div>
-          </article>
-          <article class="bf-suggest-card">
-            <img src="https://raw.githubusercontent.com/boltforgegaming/boltforge-media/main/docs/img/tier-pro-max.webp" alt="BoltForge Pro Max gaming PC with a glass side panel" width="302" height="450">
-            <div>
-              <p class="bf-suggest-name">Pro Max</p>
-              <p class="bf-suggest-pitch">1440p ultra, ready for 4K</p>
-              <p class="bf-suggest-price">Starting at $4,674 · Tax included</p>
-              <p class="bf-suggest-founder">Founder price, deposit by Oct 31 · $4,567</p>
-              <button type="button" data-bf="tier" data-tier="pro-max" aria-pressed="false">Start with this build</button>
-            </div>
-          </article>
+    <p class="bf-intro">Start from Core, Pro, Pro Max, or Ultra, or pick every part yourself. The estimate updates as you go.</p>
+    <aside class="bf-suggest" aria-labelledby="bf-suggest-title">
+      <p class="bf-suggest-label" id="bf-suggest-title">Not sure where to start?</p>
+      <div class="bf-suggest-table">
+        <div class="bf-suggest-row">
+          <span class="bf-suggest-name">Pro</span>
+          <span class="bf-suggest-pitch">1440p high</span>
+          <span class="bf-suggest-break" aria-hidden="true"></span>
+          <span class="bf-suggest-price">From $3,858 · Tax included</span>
+          <span class="bf-suggest-founder">Founder $3,751</span>
+          <button type="button" class="bf-start" data-bf="tier" data-tier="pro" aria-pressed="false">Start →</button>
         </div>
-        <p class="bf-suggest-offers">Founder assembly just $149 (save $107, tax included) · Buddy Plan: $99 each when two friends order together (save $160 each) · Not combinable.</p>
+        <div class="bf-suggest-row">
+          <span class="bf-suggest-name">Pro Max</span>
+          <span class="bf-suggest-pitch">1440p ultra, 4K-ready</span>
+          <span class="bf-suggest-break" aria-hidden="true"></span>
+          <span class="bf-suggest-price">From $4,674 · Tax included</span>
+          <span class="bf-suggest-founder">Founder $4,567</span>
+          <button type="button" class="bf-start" data-bf="tier" data-tier="pro-max" aria-pressed="false">Start →</button>
+        </div>
+      </div>
+      <div class="bf-suggest-foot">
+        <p class="bf-suggest-offers">Founder assembly $149 · Buddy Plan $99 each · Not combinable</p>
         <a class="bf-suggest-all" href="/builds">See all builds</a>
-      </aside>
-    </div>
+      </div>
+    </aside>
     <div data-bf-region="banner"></div>
     <div class="bf-layout">
       <div class="bf-main">
