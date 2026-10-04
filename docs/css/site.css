@@ -59,18 +59,32 @@ a:hover {
 .skip {
   position: absolute;
   left: 16px;
-  top: -40px;
+  top: 12px;
+  z-index: 40;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
   background: var(--lime);
   color: var(--lime-ink);
-  padding: 8px 12px;
-  z-index: 40;
   border-radius: 8px;
   font-weight: 700;
   text-decoration: none;
 }
 
-.skip:focus {
-  top: 12px;
+.skip:focus,
+.skip:focus-visible {
+  width: auto;
+  height: auto;
+  padding: 8px 12px;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  white-space: normal;
 }
 
 .wrap {
@@ -263,6 +277,31 @@ p {
   font-weight: 700;
   font-size: 1.05rem;
   margin: 8px 0 14px;
+}
+
+.price-chips {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 16px;
+  padding: 0;
+}
+
+.price-chips li {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 16px;
+  color: var(--lime);
+  font-weight: 700;
+  text-align: center;
+}
+
+.price-chips strong {
+  display: block;
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 700;
 }
 
 .page-head {
@@ -532,7 +571,8 @@ section[id] {
   }
 
   .grid-2,
-  .offer-grid {
+  .offer-grid,
+  .price-chips {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -547,7 +587,8 @@ section[id] {
 }
 
 @media (min-width: 1000px) {
-  .grid-4 {
+  .grid-4,
+  .price-chips {
     grid-template-columns: repeat(4, 1fr);
   }
 }
