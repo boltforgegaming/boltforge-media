@@ -1,6 +1,6 @@
 # Zoho snippets
 
-Zoho's free plan allows five pages. Paste `header-code.txt` into the site header. It hides the Zoho header and footer, lets each snippet run full bleed, and includes the sitewide schema, the FAQPage block, and the booking and chat embeds. The header script binds the phone menu and mounts the booking iframe when the page snippet appears, so the header can load before Zoho inserts that snippet.
+Zoho's free plan allows five pages. Paste `header-code.txt` into the site header. It hides the Zoho header and footer, lets each snippet run full bleed, and includes the sitewide schema, the FAQPage block, and the chat embed. The header script binds the phone menu when the page snippet appears, so the header can load before Zoho inserts that snippet. The Bookings calendar is static HTML in the Book a Visit snippet.
 
 | Page | Zoho slug | Snippet |
 | --- | --- | --- |

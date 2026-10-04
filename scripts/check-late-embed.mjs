@@ -146,32 +146,34 @@ try {
 
   const early = await poll(cdp, sessionId, `(() => {
     const root = document.documentElement;
-    if (!root.dataset.earlyNav || !root.dataset.earlyBookings) return null;
-    if (root.dataset.earlyNav !== "no" || root.dataset.earlyBookings !== "no") {
-      return { ready: true, bad: true, earlyNav: root.dataset.earlyNav || "", earlyBookings: root.dataset.earlyBookings || "" };
+    if (!root.dataset.earlyNav || !root.dataset.earlyFrame) return null;
+    if (root.dataset.earlyNav !== "no" || root.dataset.earlyFrame !== "no") {
+      return { ready: true, bad: true, earlyNav: root.dataset.earlyNav || "", earlyFrame: root.dataset.earlyFrame || "" };
     }
     if (root.dataset.injected !== "yes") return null;
-    const frame = document.querySelector("[data-bookings] iframe.bookings-frame");
-    const fallback = document.querySelector("[data-bookings-fallback]");
-    if (!frame || !fallback) return null;
+    const frame = document.querySelector("iframe.bookings-frame");
+    if (!frame) return null;
     return {
       ready: true,
       bad: false,
-      frames: document.querySelectorAll("[data-bookings] iframe").length,
-      src: frame.src,
-      title: frame.title,
-      hidden: fallback.hidden,
-      fallbackText: fallback.innerText,
+      frames: document.querySelectorAll("iframe.bookings-frame").length,
+      src: frame.getAttribute("src"),
+      title: frame.getAttribute("title"),
+      loading: frame.getAttribute("loading"),
+      call: document.querySelector(".bookings-call") ? document.querySelector(".bookings-call").textContent.trim() : "",
+      fallback: document.body.innerText.includes("not connected yet"),
     };
   })()`, 8000);
 
   if (early.bad) throw new Error(`snippet was present before injection: ${JSON.stringify(early)}`);
-  if (early.frames !== 1) throw new Error(`expected one booking iframe, found ${early.frames}`);
-  if (!early.src.includes("https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming")) {
+  if (early.frames !== 1) throw new Error(`expected one static booking iframe, found ${early.frames}`);
+  if (early.src !== "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming") {
     throw new Error(`iframe src is ${early.src}`);
   }
   if (early.title !== "Book a visit with BoltForge Gaming") throw new Error(`iframe title is ${early.title}`);
-  if (!early.hidden) throw new Error("booking fallback stayed visible after the iframe mounted");
+  if (early.loading !== "lazy") throw new Error(`iframe loading is ${early.loading}`);
+  if (early.call !== "or call (208) 996-3502") throw new Error(`call line is ${early.call}`);
+  if (early.fallback) throw new Error("late snippet still shows the booking fallback");
 
   await evaluate(cdp, sessionId, `document.querySelector(".nav-toggle-bars").dispatchEvent(new MouseEvent("click", { bubbles: true }))`);
   const opened = await evaluate(cdp, sessionId, `(() => {
@@ -205,8 +207,25 @@ try {
   const outside = await evaluate(cdp, sessionId, `document.querySelector(".nav").classList.contains("is-open")`);
   if (outside) throw new Error("a click outside the header left the menu open");
 
-  const stillOne = await evaluate(cdp, sessionId, `document.querySelectorAll("[data-bookings] iframe").length`);
-  if (stillOne !== 1) throw new Error(`booking iframe was mounted ${stillOne} times`);
+  const stillOne = await evaluate(cdp, sessionId, `document.querySelectorAll("iframe.bookings-frame").length`);
+  if (stillOne !== 1) throw new Error(`booking iframe count changed to ${stillOne}`);
+
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 1280,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  }, sessionId);
+  const desktopHeight = await evaluate(cdp, sessionId, `Math.round(document.querySelector("iframe.bookings-frame").getBoundingClientRect().height)`);
+  if (desktopHeight !== 800) throw new Error(`desktop booking iframe is ${desktopHeight}px`);
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  }, sessionId);
+  const phoneHeight = await evaluate(cdp, sessionId, `Math.round(document.querySelector("iframe.bookings-frame").getBoundingClientRect().height)`);
+  if (phoneHeight !== 1200) throw new Error(`phone booking iframe is ${phoneHeight}px`);
 
   if (shotDir) {
     await mkdir(shotDir, { recursive: true });
@@ -246,22 +265,58 @@ try {
     const frame = await evaluate(cdp, sessionId, `(() => {
       const iframe = document.querySelector("iframe.bookings-frame");
       const box = iframe.getBoundingClientRect();
-      return {
-        top: Math.round(box.top),
-        h: Math.round(box.height),
-        hidden: document.querySelector("[data-bookings-fallback]").hidden,
-      };
+      return { top: Math.round(box.top), h: Math.round(box.height) };
     })()`);
-    if (frame.h < 790 || frame.top < 0 || frame.top > 200 || !frame.hidden) {
+    if (frame.h < 790 || frame.top < 0 || frame.top > 200) {
       throw new Error(`iframe screenshot state is wrong: ${JSON.stringify(frame)}`);
     }
     const frameShot = await cdp.send("Page.captureScreenshot", { format: "png" }, sessionId);
     await writeFile(join(shotDir, "late_book_iframe.png"), Buffer.from(frameShot.data, "base64"));
+
+    const { targetId: bookTarget } = await cdp.send("Target.createTarget", {
+      url: `http://127.0.0.1:${port}/book.html`,
+    });
+    const { sessionId: bookSession } = await cdp.send("Target.attachToTarget", { targetId: bookTarget, flatten: true });
+    await cdp.send("Page.enable", {}, bookSession);
+    await cdp.send("Runtime.enable", {}, bookSession);
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: 1280,
+      height: 1100,
+      deviceScaleFactor: 1,
+      mobile: false,
+    }, bookSession);
+    const bookState = await poll(cdp, bookSession, `(() => {
+      const iframe = document.querySelector("iframe.bookings-frame");
+      const call = document.querySelector(".bookings-call");
+      if (!iframe || !call) return null;
+      document.documentElement.style.scrollBehavior = "auto";
+      const header = document.querySelector(".site-header").getBoundingClientRect().height;
+      const heading = iframe.closest("section").querySelector("h2");
+      const top = heading.getBoundingClientRect().top + window.scrollY - header - 16;
+      window.scrollTo(0, top);
+      const box = iframe.getBoundingClientRect();
+      return {
+        h: Math.round(box.height),
+        top: Math.round(box.top),
+        src: iframe.getAttribute("src"),
+        title: iframe.getAttribute("title"),
+        loading: iframe.getAttribute("loading"),
+        call: call.textContent.trim(),
+        fallback: document.body.innerText.includes("not connected yet"),
+        heading: heading.textContent.trim(),
+      };
+    })()`, 8000);
+    if (bookState.h < 790 || bookState.h > 810) throw new Error(`desktop iframe height is ${bookState.h}`);
+    if (bookState.fallback) throw new Error("book page still shows the booking fallback");
+    if (bookState.call !== "or call (208) 996-3502") throw new Error(`book call line is ${bookState.call}`);
+    await delay(1200);
+    const bookShot = await cdp.send("Page.captureScreenshot", { format: "png" }, bookSession);
+    await writeFile(join(shotDir, "book_static_iframe.png"), Buffer.from(bookShot.data, "base64"));
     console.log(`screenshots in ${shotDir}`);
   }
 
   browserWs.close();
-  console.log("late snippet: menu toggles and the booking iframe mounts");
+  console.log("late snippet: menu toggles and the static booking iframe stays in the page");
 } catch (error) {
   failed = true;
   console.error(error instanceof Error ? error.message : error);
