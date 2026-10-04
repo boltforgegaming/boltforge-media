@@ -248,7 +248,7 @@ for path in sorted(docs.glob("*.html")):
     for stale in ("Fairview Ave showroom", "our Boise showroom", "the Boise showroom", "our showroom"):
         if stale in raw:
             fail(f"{path.name} still says {stale!r}")
-    if path.name == "services.html":
+    if path.name in {"services.html", "late-embed-harness.html"}:
         continue
     if showroom not in raw and showroom.capitalize() not in raw and "The BoltForge showroom inside Boise Computer Care" not in raw:
         fail(f"{path.name} never names the BoltForge showroom inside Boise Computer Care")
@@ -266,6 +266,15 @@ if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in 
     fail("docs/js/embeds.js is missing the SalesIQ widget code")
 if "https://salesiq.zohopublic.com/widget?wc=" not in embeds:
     fail("docs/js/embeds.js is missing the SalesIQ widget URL")
+for needle in (
+    'closest(".nav-toggle")',
+    'closest(".nav")',
+    "MutationObserver",
+    "observer.disconnect()",
+    'event.key !== "Escape"',
+):
+    if needle not in embeds:
+        fail(f"docs/js/embeds.js is missing the late-snippet hook {needle}")
 book = (docs / "book.html").read_text()
 for phrase in (
     "Book a showroom visit",
@@ -329,6 +338,8 @@ if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in 
     fail("zoho/header-code.txt is missing the SalesIQ widget code")
 if "https://salesiq.zohopublic.com/widget?wc=" not in header:
     fail("zoho/header-code.txt is missing the SalesIQ widget URL")
+if "MutationObserver" not in header or 'closest(".nav-toggle")' not in header:
+    fail("zoho/header-code.txt is missing the late-snippet menu and booking hooks")
 
 if errors:
     print(f"{len(errors)} check(s) failed:")
@@ -347,3 +358,4 @@ fi
 java -jar "$VNU_JAR" --errors-only "$ROOT"/docs/*.html
 java -jar "$VNU_JAR" --errors-only --css "$ROOT"/docs/css/site.css
 echo "html ok"
+node "$ROOT/scripts/check-late-embed.mjs"

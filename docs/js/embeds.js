@@ -4,6 +4,9 @@ var BOLTFORGE_EMBEDS = {
 };
 
 (function () {
+  if (window.__boltforgeEmbeds) return;
+  window.__boltforgeEmbeds = true;
+
   var config = BOLTFORGE_EMBEDS;
 
   function isPlaceholder(value, token) {
@@ -12,9 +15,10 @@ var BOLTFORGE_EMBEDS = {
 
   function mountBookings() {
     var mount = document.querySelector("[data-bookings]");
-    if (!mount || mount.querySelector("iframe")) return;
+    if (!mount) return "waiting";
+    if (mount.querySelector("iframe")) return "mounted";
     var url = config.bookingsUrl;
-    if (isPlaceholder(url, "BOOKINGS_URL") || url.indexOf("https://") !== 0) return;
+    if (isPlaceholder(url, "BOOKINGS_URL") || url.indexOf("https://") !== 0) return "skip";
     var frame = document.createElement("iframe");
     frame.className = "bookings-frame";
     frame.src = url;
@@ -25,6 +29,15 @@ var BOLTFORGE_EMBEDS = {
     var openLink = mount.querySelector(".bookings-open");
     if (openLink) mount.insertBefore(frame, openLink);
     else mount.appendChild(frame);
+    return "mounted";
+  }
+
+  function watchBookings() {
+    if (mountBookings() !== "waiting" || !document.body) return;
+    var observer = new MutationObserver(function () {
+      if (mountBookings() !== "waiting") observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function loadSalesIq() {
@@ -44,30 +57,40 @@ var BOLTFORGE_EMBEDS = {
     else window.addEventListener("load", start);
   }
 
+  function setMenuOpen(nav, open) {
+    var toggle = nav.querySelector(".nav-toggle");
+    nav.classList.toggle("is-open", open);
+    if (!toggle) return;
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+
   function bindMenu() {
-    var nav = document.querySelector(".nav");
-    var toggle = document.querySelector(".nav-toggle");
-    var links = document.getElementById("site-nav");
-    if (!nav || !toggle || !links || toggle.dataset.bound === "true") return;
-    toggle.dataset.bound = "true";
-    var setOpen = function (open) {
-      nav.classList.toggle("is-open", open);
-      toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-    };
-    toggle.addEventListener("click", function () {
-      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    document.addEventListener("click", function (event) {
+      var origin = event.target;
+      if (!origin || !origin.closest) return;
+      var toggle = origin.closest(".nav-toggle");
+      if (toggle) {
+        var nav = toggle.closest(".nav");
+        if (!nav) return;
+        setMenuOpen(nav, toggle.getAttribute("aria-expanded") !== "true");
+        return;
+      }
+      var openNav = document.querySelector(".nav.is-open");
+      if (!openNav || openNav.contains(origin)) return;
+      setMenuOpen(openNav, false);
     });
-    links.addEventListener("click", function () { setOpen(false); });
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      var openNav = document.querySelector(".nav.is-open");
+      if (openNav) setMenuOpen(openNav, false);
     });
   }
 
   function boot() {
-    mountBookings();
-    loadSalesIq();
     bindMenu();
+    loadSalesIq();
+    watchBookings();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

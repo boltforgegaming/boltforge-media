@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Late snippet harness</title>
+<link rel="stylesheet" href="css/site.css">
+<script src="js/embeds.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.documentElement.dataset.earlyNav = document.querySelector(".nav-toggle") ? "yes" : "no";
+  document.documentElement.dataset.earlyBookings = document.querySelector("[data-bookings]") ? "yes" : "no";
+});
+window.addEventListener("load", function () {
+  setTimeout(function () {
+    var slot = document.getElementById("late-snippet");
+    document.body.append(slot.content);
+    document.documentElement.dataset.injected = "yes";
+  }, 50);
+});
+</script>
+</head>
+<body>
+<template id="late-snippet">
+<a class="skip" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="logo" href="index.html"><img src="img/logo.svg" alt="BoltForge Gaming" width="171" height="40"></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu"><span class="nav-toggle-bars" aria-hidden="true"></span></button>
+    <nav class="nav-links" id="site-nav" aria-label="Primary">
+      <a href="index.html">Home</a><a href="builds.html">Builds</a><a href="custom-build.html">Custom Build</a><a href="book.html">Book a Visit</a><a href="about.html">About</a>
+    </nav>
+    <a class="btn nav-cta" href="about.html#contact">Get a Quote</a>
+  </div>
+</header>
+<main id="content">
+<section class="page-head">
+  <div class="wrap">
+    <h1>Book a showroom visit</h1>
+    <p class="lede">Choose a visit below, then pick a time.</p>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap">
+    <h2>Choose a time</h2>
+    <div class="bookings" data-bookings>
+      <div class="bookings-fallback" data-bookings-fallback>
+        <p>Online booking is not connected yet. Call the showroom or request a quote and we will set a time.</p>
+        <div class="actions left">
+          <a class="btn" href="tel:+12089963502">Call (208) 996-3502</a>
+          <a class="btn ghost" href="about.html#contact">Get a Quote</a>
+        </div>
+      </div>
+      <p class="bookings-open"><a href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page</a></p>
+    </div>
+  </div>
+</section>
+</main>
+</template>
+</body>
+</html>
