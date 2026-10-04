@@ -16,6 +16,7 @@ PAGES = (
     ("builds.html", "builds", "Builds", "/builds"),
     ("custom-build.html", "custom-build", "Custom Build", "/custom-build"),
     ("services.html", "services", "Services", "/services"),
+    ("book.html", "book", "Book a Visit", "/book"),
     ("about.html", "about", "About", "/about"),
 )
 SLUGS = {
@@ -23,6 +24,7 @@ SLUGS = {
     "builds.html": "/builds",
     "custom-build.html": "/custom-build",
     "services.html": "/services",
+    "book.html": "/book",
     "about.html": "/about",
 }
 FONTS = """<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,9 +32,23 @@ FONTS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet">
 """
 HIDE = """<style>
+.zpheader,
+.zpfooter,
+.zpheader-container,
 .theme-header,
 .theme-footer {
   display: none !important;
+}
+.theme-content,
+.zpcontent-container,
+.zpelement-wrapper,
+.zpelem-code {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 </style>
 """
@@ -61,6 +77,7 @@ def page_snippet(filename, label, slug):
     start = html.index('<a class="skip"')
     end = html.index("</footer>", start) + len("</footer>")
     body = rewrite(html[start:end])
+    body = body.replace('<script src="js/embeds.js" defer></script>\n', "")
     faq = "\n".join(block for block in json_ld_blocks(html) if "FAQPage" in block)
     css = (DOCS / "css" / "site.css").read_text().strip()
     parts = [
@@ -108,10 +125,14 @@ def header_code():
     blocks = [block for block in json_ld_blocks(html) if "FAQPage" not in block]
     if len(blocks) < 2:
         raise SystemExit("index.html is missing sitewide schema")
+    script = (DOCS / "js" / "embeds.js").read_text().strip()
     lines = [
-        "<!-- Paste into Zoho Sites header code. Hides the theme header and footer and adds the sitewide schema. -->",
+        "<!-- Paste into Zoho Sites header code. Hides the theme header and footer, lets the snippet run full bleed, and adds the sitewide schema and embed config. -->",
         HIDE.rstrip(),
         *blocks,
+        "<script>",
+        script,
+        "</script>",
     ]
     return "\n".join(lines) + "\n"
 
@@ -130,6 +151,7 @@ def build():
                 'href="builds.html',
                 'href="custom-build.html',
                 'href="services.html',
+                'href="book.html',
                 'href="about.html',
             ):
                 if stale in text:
@@ -139,7 +161,20 @@ def build():
         if not any(IMG in text for text in page_files):
             raise SystemExit(f"{filename} snippet is missing raw image URLs")
     header = files["header-code.txt"]
-    for needle in (".theme-header", ".theme-footer", "display: none !important", "ComputerStore", "LocalBusiness"):
+    for needle in (
+        ".zpheader",
+        ".zpfooter",
+        ".zpheader-container",
+        ".theme-header",
+        ".theme-footer",
+        "display: none !important",
+        "max-width: none !important",
+        "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming",
+        "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335",
+        "https://salesiq.zohopublic.com/widget?wc=",
+        "ComputerStore",
+        "LocalBusiness",
+    ):
         if needle not in header:
             raise SystemExit(f"header-code.txt is missing {needle}")
     return files

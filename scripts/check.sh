@@ -24,6 +24,7 @@ pages = {
     "builds.html": "https://www.boltforgegaming.com/builds",
     "custom-build.html": "https://www.boltforgegaming.com/custom-build",
     "services.html": "https://www.boltforgegaming.com/upgrades-service",
+    "book.html": "https://www.boltforgegaming.com/book",
     "about.html": "https://www.boltforgegaming.com/about",
 }
 
@@ -253,6 +254,45 @@ if "owned by BoltForge Inc, an Idaho corporation. 18-month warranty" not in abou
     fail("footer lost the ownership sentence")
 if "is owned by BoltForge Inc, an Idaho corporation, located at" not in about_raw:
     fail("privacy policy lost the ownership sentence")
+
+embeds = (docs / "js" / "embeds.js").read_text()
+if "https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" not in embeds:
+    fail("docs/js/embeds.js is missing the Zoho Bookings portal URL")
+if "siqe62211ac8f26ff97ebbc0fff63048a1399ac0f63725b2b8517f08967f046a335" not in embeds:
+    fail("docs/js/embeds.js is missing the SalesIQ widget code")
+if "https://salesiq.zohopublic.com/widget?wc=" not in embeds:
+    fail("docs/js/embeds.js is missing the SalesIQ widget URL")
+book = (docs / "book.html").read_text()
+for phrase in (
+    "Book a showroom visit",
+    "Showroom Visit &amp; Build Consultation",
+    "Virtual Build Consultation",
+    "PC Pickup &amp; Walkthrough",
+    "30 min",
+    "20 min",
+    "the BoltForge showroom inside Boise Computer Care, 10504 W Fairview Ave, Boise ID 83704",
+    "Friday–Wednesday, 10 AM–8 PM. Closed Thursday.",
+    'data-bookings',
+    'href="tel:+12089963502"',
+    'href="about.html#contact">Get a Quote',
+    'href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page',
+):
+    if phrase not in book:
+        fail(f"book.html missing {phrase}")
+if "once it is connected" in book:
+    fail("book.html still says the calendar is not connected")
+if "<iframe" in book.lower():
+    fail("book.html should mount the calendar iframe from embeds.js")
+for filename in pages:
+    raw = (docs / filename).read_text()
+    if 'src="js/embeds.js"' not in raw:
+        fail(f"{filename} is missing js/embeds.js")
+    if "Book a Visit" not in raw:
+        fail(f"{filename} is missing the Book a Visit nav link")
+    if 'class="nav-toggle"' not in raw:
+        fail(f"{filename} is missing the menu button")
+if 'href="book.html">Book a visit' not in index or 'class="bf-book"' not in custom:
+    fail("Home or Custom Build is missing the Book a visit button")
 
 if errors:
     print(f"{len(errors)} check(s) failed:")
