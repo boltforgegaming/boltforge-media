@@ -575,33 +575,6 @@ section[id] {
   margin: 8px 0 10px;
 }
 
-.bf-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.bf-config a.bf-home {
-  display: inline-block;
-  background: transparent;
-  color: #fff;
-  border: 1px solid #3a3a3a;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-weight: 700;
-  text-decoration: none;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.bf-config a.bf-home:hover,
-.bf-config a.bf-home:focus-visible {
-  border-color: var(--lime);
-  color: var(--lime);
-  background: transparent;
-}
-
 .bf-intro-grid {
   display: grid;
   gap: 16px;
