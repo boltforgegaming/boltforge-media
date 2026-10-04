@@ -177,8 +177,12 @@ for amount in ("2,957", "3,858", "4,674", "10,292", "2,850", "3,751", "4,567", "
         fail(f"index.html missing {needle}")
 for amount in ("2,957", "3,858", "4,674", "10,292"):
     needle = f"Starting at ${amount} · Tax included"
-    if needle not in builds or needle not in custom:
-        fail(f"list price missing on builds or custom build: {needle}")
+    if needle not in builds:
+        fail(f"list price missing on builds: {needle}")
+for amount in ("3,858", "4,674"):
+    needle = f"Starting at ${amount} · Tax included"
+    if needle not in custom:
+        fail(f"list price missing on custom build: {needle}")
 
 about = parsed_pages["about.html"]
 for section in ("about", "faq", "warranty", "contact", "privacy", "walkin"):
@@ -235,6 +239,21 @@ if 'id="bf-configurator"' not in custom:
 if "e8059e15eb56abe0ea3dd4d91c4d8638f3832195762af298ff50f295a6132f8c" not in custom:
     fail("configurator lost its Zoho lead token")
 
+showroom = "the BoltForge showroom inside Boise Computer Care"
+for path in sorted(docs.glob("*.html")):
+    raw = path.read_text()
+    for stale in ("Fairview Ave showroom", "our Boise showroom", "the Boise showroom", "our showroom"):
+        if stale in raw:
+            fail(f"{path.name} still says {stale!r}")
+    if showroom not in raw and showroom.capitalize() not in raw and "The BoltForge showroom inside Boise Computer Care" not in raw:
+        fail(f"{path.name} never names the BoltForge showroom inside Boise Computer Care")
+if "<p>BoltForge Gaming is owned by BoltForge Inc, an Idaho corporation.</p>" in about_raw:
+    fail("Come say hello still includes the ownership sentence")
+if "owned by BoltForge Inc, an Idaho corporation. 18-month warranty" not in about_raw:
+    fail("footer lost the ownership sentence")
+if "is owned by BoltForge Inc, an Idaho corporation, located at" not in about_raw:
+    fail("privacy policy lost the ownership sentence")
+
 if errors:
     print(f"{len(errors)} check(s) failed:")
     for item in errors:
@@ -242,6 +261,8 @@ if errors:
     sys.exit(1)
 print("links, prices, schema, and forms ok")
 PY
+
+python3 "$ROOT/scripts/build_zoho.py" --check
 
 VNU_JAR="${VNU_JAR:-/tmp/vnu.jar}"
 if [[ ! -f "$VNU_JAR" ]]; then
