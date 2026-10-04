@@ -1,4 +1,4 @@
-<!-- Paste into Zoho Sites header code. Hides the theme header and footer, lets the snippet run full bleed, and adds the sitewide schema and embed config. -->
+<!-- Paste into Zoho Sites header code. Hides the theme header and footer, lets the snippet run full bleed, and adds the sitewide schema, the FAQPage block, and the embed config. -->
 <style>
 .zpheader,
 .zpfooter,
@@ -268,6 +268,96 @@
     "@id": "https://www.boltforgegaming.com/#store"
   },
   "inLanguage": "en-US"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://www.boltforgegaming.com/faq#faq",
+  "url": "https://www.boltforgegaming.com/faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does a BoltForge custom gaming PC cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Starting-at list prices, tax included: Core $2,957, Pro $3,858, Pro Max $4,674 and Ultra $10,292. Every build comes with a clear, upfront quote based on the parts you choose, so you know exactly what you are paying before we start."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is assembly included in the price?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Our regular assembly fee is $250, and it is already included in our list prices. Launch offers: with our Founder offer, assembly is $149 on builds with a deposit paid by October 31, 2026. With our Buddy Plan, assembly is $99 each when two friends order builds together. The two offers can't be combined."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you require a deposit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. We take a 50% deposit when you place your order. Your deposit is refundable until parts are ordered."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does a build take?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Typically 7–14 business days after parts arrive; we'll confirm in your quote."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you ship, or can I pick up in Boise?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For the first 30 days after our launch on October 4, 2026, we offer local pickup in Boise only, with no shipping. Pickup at the BoltForge showroom inside Boise Computer Care is free. After that, shipping is $79 standard or $149 expedited, and free on orders of $3,000 or more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is your return policy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pre-built systems can be returned within 30 days with a 15% restocking fee. Custom builds are returnable only if they are dead or defective. Dead-on-arrival (DOA) issues reported within 14 days are handled free."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What warranty comes with a BoltForge PC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every BoltForge build includes an 18-month warranty. See our Warranty page for coverage details and how to request service."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the custom build process work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Consult, Spec, Build, Test & Deliver: share your games, budget and style; we recommend a parts list with an upfront quote; we hand-assemble your PC; then we stress-test and tune it before pickup or shipping."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I see builds in person?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Visit the BoltForge showroom inside Boise Computer Care at 10504 W Fairview Ave, Boise, ID 83704, open Friday through Wednesday 10 AM to 8 PM (closed Thursday)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How quickly will you reply to a quote request?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We reply within 1 business day with a recommended build and an upfront quote."
+      }
+    }
+  ]
 }
 </script>
 <script>

@@ -15,15 +15,14 @@ PAGES = (
     ("index.html", "index", "Home", "/"),
     ("builds.html", "builds", "Builds", "/builds"),
     ("custom-build.html", "custom-build", "Custom Build", "/custom-build"),
-    ("services.html", "services", "Services", "/services"),
-    ("book.html", "book", "Book a Visit", "/book"),
     ("about.html", "about", "About", "/about"),
+    ("book.html", "book", "Book a Visit", "/book"),
 )
 SLUGS = {
     "index.html": "/",
     "builds.html": "/builds",
     "custom-build.html": "/custom-build",
-    "services.html": "/services",
+    "services.html": "/book#services",
     "book.html": "/book",
     "about.html": "/about",
 }
@@ -125,11 +124,15 @@ def header_code():
     blocks = [block for block in json_ld_blocks(html) if "FAQPage" not in block]
     if len(blocks) < 2:
         raise SystemExit("index.html is missing sitewide schema")
+    faq = [block for block in json_ld_blocks((DOCS / "about.html").read_text()) if "FAQPage" in block]
+    if len(faq) != 1:
+        raise SystemExit("about.html is missing FAQPage schema")
     script = (DOCS / "js" / "embeds.js").read_text().strip()
     lines = [
-        "<!-- Paste into Zoho Sites header code. Hides the theme header and footer, lets the snippet run full bleed, and adds the sitewide schema and embed config. -->",
+        "<!-- Paste into Zoho Sites header code. Hides the theme header and footer, lets the snippet run full bleed, and adds the sitewide schema, the FAQPage block, and the embed config. -->",
         HIDE.rstrip(),
         *blocks,
+        *faq,
         "<script>",
         script,
         "</script>",
@@ -137,8 +140,27 @@ def header_code():
     return "\n".join(lines) + "\n"
 
 
+def readme():
+    return """# Zoho snippets
+
+Zoho's free plan allows five pages. Paste `header-code.txt` into the site header. It hides the Zoho header and footer, lets each snippet run full bleed, and includes the sitewide schema, the FAQPage block, and the booking and chat embeds.
+
+| Page | Zoho slug | Snippet |
+| --- | --- | --- |
+| Home | `/` | `index.html` |
+| Builds | `/builds` | `builds.html` |
+| Custom Build | `/custom-build` | `custom-build-part1.html`, then `custom-build-part2.html` |
+| About | `/about` | `about-part1.html`, then `about-part2.html` |
+| Book a Visit | `/book` | `book.html` |
+
+The Zoho page with slug `/book` replaces the old Services page. Services and upgrades are the section at `/book#services`. Do not create a `/services` page. There is no services snippet to paste.
+
+Custom Build is split because of Zoho's size limit. Part 1 holds the stylesheet, including the rules for the slim full-width "Not sure where to start?" rows. Part 2 holds the configurator script and those rows. Paste part 1 first so the row styles are on the page before the rows render.
+"""
+
+
 def build():
-    files = {"header-code.txt": header_code()}
+    files = {"header-code.txt": header_code(), "README.md": readme()}
     for filename, stem, label, slug in PAGES:
         files.update(split_snippet(stem, page_snippet(filename, label, slug)))
     for name, text in files.items():
@@ -174,9 +196,26 @@ def build():
         "https://salesiq.zohopublic.com/widget?wc=",
         "ComputerStore",
         "LocalBusiness",
+        "FAQPage",
     ):
         if needle not in header:
             raise SystemExit(f"header-code.txt is missing {needle}")
+    part1 = files["custom-build-part1.html"]
+    part2 = files["custom-build-part2.html"]
+    style_end = part1.find("</style>")
+    if part1.count("<style>") != 1 or style_end < 0 or ".bf-suggest-row" not in part1[:style_end]:
+        raise SystemExit("custom-build part 1 does not contain a closed start-row stylesheet")
+    if "<style" in part2:
+        raise SystemExit("custom-build part 2 splits the stylesheet")
+    if "Not sure where to start?" not in part2 or "bf-suggest-row" not in part2:
+        raise SystemExit("custom-build part 2 is missing the slim start rows")
+    if "Start with this build" in part1 + part2 or "bf-intro-grid" in part1 + part2:
+        raise SystemExit("custom-build snippet still has the old suggestion card")
+    book = "".join(text for name, text in files.items() if name == "book.html" or name.startswith("book-part"))
+    if 'id="services"' not in book or "Services &amp; upgrades" not in book:
+        raise SystemExit("book snippet is missing the services section")
+    if "services.html" in files:
+        raise SystemExit("services snippet should not be generated")
     return files
 
 
