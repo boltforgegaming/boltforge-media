@@ -180,7 +180,7 @@ for amount in ("2,957", "3,858", "4,674", "10,292"):
     if needle not in builds:
         fail(f"list price missing on builds: {needle}")
 for amount in ("3,858", "4,674"):
-    needle = f"Starting at ${amount} · Tax included"
+    needle = f"From ${amount} · Tax included"
     if needle not in custom:
         fail(f"list price missing on custom build: {needle}")
 
