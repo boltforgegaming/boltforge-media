@@ -325,9 +325,24 @@ for folder in ("docs", "zoho"):
                 continue
             if "Founder" in sentence:
                 continue
-            if re.search(r"shipping|expedited", sentence, re.I):
-                continue
             fail(f"{path.relative_to(root)} has $149 without Founder in the same sentence: {' '.join(sentence.split())[:180]}")
+banned_shipping = (
+    "$79",
+    "free on orders of $3,000",
+    "free on orders $3,000",
+    "Free shipping on orders of $3,000",
+)
+for folder in ("docs", "zoho"):
+    base = root / folder
+    if not base.is_dir():
+        continue
+    for path in sorted(base.rglob("*")):
+        if not path.is_file() or path.suffix.lower() not in {".html", ".txt", ".js", ".css", ".md"}:
+            continue
+        raw = path.read_text()
+        for phrase in banned_shipping:
+            if phrase in raw:
+                fail(f"{path.relative_to(root)} still has unapproved shipping copy: {phrase}")
 if "height: 800px" not in css or "min-height: 1200px" not in css:
     fail("booking iframe lost its 800px desktop or 1200px phone height")
 zoho_book = (root / "zoho" / "book.html").read_text()
