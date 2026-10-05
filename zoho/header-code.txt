@@ -314,7 +314,7 @@
       "name": "Do you ship, or can I pick up in Boise?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "For the first 30 days after our launch on October 4, 2026, we offer local pickup in Boise only, with no shipping. Pickup at the BoltForge showroom inside Boise Computer Care is free. After that, shipping is $79 standard or $149 expedited, and free on orders of $3,000 or more."
+        "text": "Pickup at the BoltForge showroom inside Boise Computer Care is free. Local pickup only through November 2. Shipping available from November 3, quoted at checkout."
       }
     },
     {
