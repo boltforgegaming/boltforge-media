@@ -282,7 +282,7 @@ for phrase in (
     "Friday–Wednesday, 10 AM–8 PM. Closed Thursday.",
     '<iframe class="bookings-frame" src="https://boltforgegaming.zohobookings.com/portal-embed#/boltforgegaming" title="Book a visit with BoltForge Gaming" loading="lazy"></iframe>',
     'href="tel:+12089963502"',
-    'href="about.html#contact">Get a Quote',
+    'href="about.html">Get a Quote',
     'href="https://boltforgegaming.zohobookings.com/boltforgegaming">Open booking page',
     'class="bookings-call">or call <a href="tel:+12089963502">(208) 996-3502</a>',
     'id="services"',
@@ -339,8 +339,8 @@ if zoho_book.count(static_iframe) != 1:
 if "not connected yet" in zoho_book or "mountBookings" in zoho_book:
     fail("zoho/book.html still has the booking fallback or a script mount")
 services = (docs / "services.html").read_text()
-if 'content="0; url=book.html#services"' not in services or 'location.replace("book.html#services")' not in services:
-    fail("services.html must redirect to book.html#services")
+if "book.html#" in services or 'content="0; url=book.html"' not in services or 'location.replace("book.html")' not in services:
+    fail("services.html must redirect to book.html")
 if 'href="services.html' in services:
     fail("services.html still links to itself")
 for path in sorted(docs.glob("*.html")):
@@ -376,6 +376,26 @@ if 'closest(".nav-toggle")' not in header:
     fail("zoho/header-code.txt is missing the delegated phone menu")
 if "mountBookings" in header or "MutationObserver" in header:
     fail("zoho/header-code.txt still injects the booking iframe")
+
+href_re = re.compile(r"""href\s*=\s*(["'])([^"']*)\1""", re.I)
+for folder in ("docs", "zoho"):
+    base = root / folder
+    if not base.is_dir():
+        continue
+    for path in sorted(base.rglob("*")):
+        if not path.is_file() or path.suffix.lower() not in {".html", ".txt", ".js"}:
+            continue
+        text = path.read_text()
+        for match in href_re.finditer(text):
+            url = match.group(2)
+            if "#" not in url:
+                continue
+            tag_start = text.rfind("<", 0, match.start())
+            tag_end = text.find(">", match.start())
+            tag = text[tag_start:tag_end + 1] if tag_start >= 0 and tag_end >= 0 else ""
+            if re.search(r"""\bnav-toggle\b""", tag):
+                continue
+            fail(f"{path.relative_to(root)} has an anchor href: {url}")
 
 if errors:
     print(f"{len(errors)} check(s) failed:")

@@ -22,7 +22,7 @@ SLUGS = {
     "index.html": "/",
     "builds.html": "/builds",
     "custom-build.html": "/custom-build",
-    "services.html": "/book#services",
+    "services.html": "/book",
     "book.html": "/book",
     "about.html": "/about",
 }
@@ -58,7 +58,7 @@ def rewrite(html):
         attr, quote, url = match.group(1), match.group(2), match.group(3)
         for name, slug in SLUGS.items():
             if url == name or url.startswith(name + "#"):
-                url = slug + url[len(name):]
+                url = slug
                 break
         if url.startswith("img/"):
             url = IMG + url[len("img/"):]
@@ -73,7 +73,7 @@ def json_ld_blocks(html):
 
 def page_snippet(filename, label, slug):
     html = (DOCS / filename).read_text()
-    start = html.index('<a class="skip"')
+    start = html.index('<header class="site-header">')
     end = html.index("</footer>", start) + len("</footer>")
     body = rewrite(html[start:end])
     body = body.replace('<script src="js/embeds.js" defer></script>\n', "")
@@ -153,7 +153,7 @@ Zoho's free plan allows five pages. Paste `header-code.txt` into the site header
 | About | `/about` | `about-part1.html`, then `about-part2.html` |
 | Book a Visit | `/book` | `book.html` |
 
-The Zoho page with slug `/book` replaces the old Services page. Services and upgrades are the section at `/book#services`. Do not create a `/services` page. There is no services snippet to paste.
+The Zoho page with slug `/book` replaces the old Services page. Services and upgrades are on `/book`. Do not create a `/services` page. There is no services snippet to paste.
 
 Custom Build is split because of Zoho's size limit. Part 1 holds the stylesheet, including the rules for the slim full-width "Not sure where to start?" rows. Part 2 holds the configurator script and those rows. Paste part 1 first so the row styles are on the page before the rows render.
 """
